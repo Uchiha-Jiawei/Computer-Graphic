@@ -207,6 +207,7 @@
     <ClInclude Include="CGRenderable.h" />
     <ClInclude Include="CGRenderContext.h" />
     <ClInclude Include="CGRenderState.h" />
+    <ClInclude Include="CGRobot.h" />
     <ClInclude Include="CGScene.h" />
     <ClInclude Include="CGSceneGraphView.h" />
     <ClInclude Include="CGTransform.h" />
@@ -217,6 +218,7 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RobotBodyTransform.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TessellationHints.h" />
     <ClInclude Include="UIEventHandler.h" />
@@ -241,6 +243,7 @@
     <ClCompile Include="CGRenderable.cpp" />
     <ClCompile Include="CGRenderContext.cpp" />
     <ClCompile Include="CGRenderState.cpp" />
+    <ClCompile Include="CGRobot.cpp" />
     <ClCompile Include="CGScene.cpp" />
     <ClCompile Include="CGSceneGraphView.cpp" />
     <ClCompile Include="CGTransform.cpp" />
@@ -252,6 +255,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RobotBodyTransform.cpp" />
     <ClCompile Include="TessellationHints.cpp" />
     <ClCompile Include="UIEventHandler.cpp" />
   </ItemGroup>

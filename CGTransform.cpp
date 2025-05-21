@@ -93,6 +93,10 @@ void CGTransform::rotate(float degrees, float x, float y, float z)
 {
     //自行补充实现功能 
 	// 旋转矩阵
+    if (x == 0 && y == 0 && z == 0)
+    {
+        x = y = z = 1;
+    }
     glm::mat4 rotMat = glm::rotate(glm::radians(degrees), glm::vec3(x, y, z));
     // 标记世界矩阵为需要更新
     postMultiply(rotMat);

@@ -96,4 +96,10 @@ public:
 	afx_msg void OnDrawCylinder();
 	afx_msg void OnDraw3DCube();
 	afx_msg void OnDraw3DCylinber();
+protected:
+	UINT mTimer = 0; //定时器
+public:
+	afx_msg void OnBtnTimer();
+	afx_msg void OnUpdateBtnTimer(CCmdUI* pCmdUI);
+	afx_msg void OnBuildRobot();
 };

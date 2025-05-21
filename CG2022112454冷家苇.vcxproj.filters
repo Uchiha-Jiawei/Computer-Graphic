@@ -111,6 +111,12 @@
     <ClInclude Include="CGCylinder.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="RobotBodyTransform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CGRobot.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CG2022112454冷家苇.cpp">
@@ -192,6 +198,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CGCylinder.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RobotBodyTransform.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CGRobot.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

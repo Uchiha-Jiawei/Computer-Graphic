@@ -45,6 +45,8 @@
 #include "TessellationHints.h"
 #include "CInputDialog1.h"
 #include "CGCylinder.h"
+#include"RobotBodyTransform.h"
+#include "CGRobot.h"
 // CCG2022112454冷家苇Doc
 
 IMPLEMENT_DYNCREATE(CCG2022112454冷家苇Doc, CDocument)
@@ -70,6 +72,9 @@ BEGIN_MESSAGE_MAP(CCG2022112454冷家苇Doc, CDocument)
 	ON_COMMAND(ID_BUTTON18, &CCG2022112454冷家苇Doc::OnMoveByMouse)
 	ON_COMMAND(ID_BUTTON20, &CCG2022112454冷家苇Doc::OnDraw3DCube)
 	ON_COMMAND(ID_BUTTON21, &CCG2022112454冷家苇Doc::OnDraw3DCylinber)
+	ON_COMMAND(ID_BUTTON17, &CCG2022112454冷家苇Doc::OnBtnTimer)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON17, &CCG2022112454冷家苇Doc::OnUpdateBtnTimer)
+	ON_COMMAND(ID_BUTTON19, &CCG2022112454冷家苇Doc::OnBuildRobot)
 END_MESSAGE_MAP()
 
 
@@ -197,7 +202,7 @@ void CCG2022112454冷家苇Doc::InstToSceneTree(CTreeCtrl* pTree, HTREEITEM hPar
 	tvinsert.item.cChildren = 0;
 	tvinsert.item.lParam = LPARAM(&node);// 
 	if (node->asGeode()) {
-		CString str(_T("Geode"));
+		CString str(_T(node->Name()));
 		tvinsert.item.pszText = str.GetBuffer();
 		str.ReleaseBuffer();
 		hTree = pTree->InsertItem(&tvinsert);
@@ -206,7 +211,7 @@ void CCG2022112454冷家苇Doc::InstToSceneTree(CTreeCtrl* pTree, HTREEITEM hPar
 	}
 	else 
 	if (node->asTransform()) {
-		CString str(_T("Trans"));
+		CString str(node->Name());
 		tvinsert.item.pszText = str.GetBuffer();
 		str.ReleaseBuffer();
 		hTree = pTree->InsertItem(&tvinsert);
@@ -217,7 +222,7 @@ void CCG2022112454冷家苇Doc::InstToSceneTree(CTreeCtrl* pTree, HTREEITEM hPar
 		}
 	}
 	else if (node->asGroup()) {
-		CString str(_T("Group"));
+		CString str(node->Name());
 		tvinsert.item.pszText = str.GetBuffer();
 		str.ReleaseBuffer();
 		hTree = pTree->InsertItem(&tvinsert);
@@ -1013,6 +1018,7 @@ void CCG2022112454冷家苇Doc::OnSmallerY()
 	}
 }
 
+int cubeNum = 0;
 void CCG2022112454冷家苇Doc::OnDraw3DCube()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -1042,6 +1048,7 @@ void CCG2022112454冷家苇Doc::OnDraw3DCube()
 		//右长方体实例节点 
 		auto t1 = std::make_shared<CGTransform>(); //实列组节点 
 		auto e1 = std::make_shared<CGGeode>();  //实列叶节点 
+		e1->setName(CString(("Cube" + std::to_string(cubeNum)).c_str())); // 节点名称
 		auto color1 = std::make_shared<CGColor>(); //属性 
 		color1->setValue(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)); //黄色 
 		e1->gocRenderStateSet()->setRenderState(color1, -1); //设置节点属性 
@@ -1055,6 +1062,7 @@ void CCG2022112454冷家苇Doc::OnDraw3DCube()
 		//左长方体节点 
 		auto t2 = std::make_shared<CGTransform>(); //实列组节点 
 		auto e2 = std::make_shared<CGGeode>();  //实列叶节点 
+		e2->setName(CString(("Cube" + std::to_string(cubeNum++)).c_str())); // 节点名称
 		auto color2 = std::make_shared<CGColor>(); //属性 
 		color2->setValue(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)); //蓝色 
 		e2->gocRenderStateSet()->setRenderState(color2, -1); //设置节点属性 
@@ -1069,13 +1077,13 @@ void CCG2022112454冷家苇Doc::OnDraw3DCube()
 
 		 //更新所有视图
 		UpdateAllViews(NULL);
-		
 
 	}
 	
 
 }
 
+int cylinberNum = 0;
 void CCG2022112454冷家苇Doc::OnDraw3DCylinber()
 {
 	// TODO: 在此添加命令处理程序代码
@@ -1107,6 +1115,7 @@ void CCG2022112454冷家苇Doc::OnDraw3DCylinber()
 		// 圆柱体实例 1：红色实心
 		auto t1 = std::make_shared<CGTransform>();
 		auto e1 = std::make_shared<CGGeode>();
+		e1->setName(CString(("Cylinber" + std::to_string(cylinberNum)).c_str())); // 节点名称
 		auto color1 = std::make_shared<CGColor>();
 		color1->setValue(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); // 红色
 		e1->gocRenderStateSet()->setRenderState(color1, -1);
@@ -1121,6 +1130,7 @@ void CCG2022112454冷家苇Doc::OnDraw3DCylinber()
 		// 圆柱体实例 2：绿色线框
 		auto t2 = std::make_shared<CGTransform>();
 		auto e2 = std::make_shared<CGGeode>();
+		e2->setName(CString(("Cylinber" + std::to_string(cylinberNum++)).c_str())); // 节点名称
 		auto color2 = std::make_shared<CGColor>();
 		color2->setValue(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)); // 绿色
 		e2->gocRenderStateSet()->setRenderState(color2, -1);
@@ -1137,4 +1147,46 @@ void CCG2022112454冷家苇Doc::OnDraw3DCylinber()
 		// 更新所有视图
 		UpdateAllViews(NULL);
 	}	
+}
+
+void CCG2022112454冷家苇Doc::OnBtnTimer()
+{
+	// TODO: 在此添加命令处理程序代码
+	CCG2022112454冷家苇View* view = nullptr;
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		if (pView->IsKindOf(RUNTIME_CLASS(CCG2022112454冷家苇View))) {
+			view = dynamic_cast<CCG2022112454冷家苇View*>(pView);
+			break;
+		}
+	}
+	if (view != nullptr) {
+		mTimer = view->toggleFrameTimer();// 启动定时器 
+	}
+}
+
+void CCG2022112454冷家苇Doc::OnUpdateBtnTimer(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(mTimer != 0);
+}
+
+int robotNum = 0;
+void CCG2022112454冷家苇Doc::OnBuildRobot()
+{
+	// TODO: 在此添加命令处理程序代码
+	
+	// 创建CGRobot对象
+	auto robot = std::make_shared<CGRobot>();
+	// 生成机器人结构
+	auto robotRoot = robot->buildRobot();
+	robotRoot->setName(CString(("Robot" + std::to_string(robotNum++)).c_str()));
+	// 添加到场景
+	mScene->GetSceneData()->asGroup()->AddChild(robotRoot);
+
+	// 更新所有视图
+	UpdateAllViews(NULL);
+	
 }

@@ -71,13 +71,15 @@
 #define ID_BUTTON18                     32787
 #define ID_BUTTON20                     32790
 #define ID_BUTTON21                     32791
+#define ID_BUTTON17                     32792
+#define ID_BUTTON19                     32793
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        312
-#define _APS_NEXT_COMMAND_VALUE         32792
+#define _APS_NEXT_COMMAND_VALUE         32794
 #define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

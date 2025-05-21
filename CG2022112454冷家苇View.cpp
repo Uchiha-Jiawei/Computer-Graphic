@@ -42,6 +42,7 @@ BEGIN_MESSAGE_MAP(CCG2022112454冷家苇View, CView)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CCG2022112454冷家苇View 构造/析构
@@ -54,6 +55,7 @@ CCG2022112454冷家苇View::CCG2022112454冷家苇View() noexcept
 
 CCG2022112454冷家苇View::~CCG2022112454冷家苇View()
 {
+	if (mTimer) KillTimer(mTimer);  //关闭定时器 
 	if (m_glfwWindow) {
 
 
@@ -247,6 +249,19 @@ bool CCG2022112454冷家苇View::AddRenderable(std::shared_ptr<CGNode> r) const
 
 	return pDoc->AddRenderable(r);
 }
+
+UINT CCG2022112454冷家苇View::toggleFrameTimer()
+{
+	if (!mTimer) {
+		mTimer = SetTimer(1, 20, NULL);// 启动50FPS定时器（20毫秒间隔） 
+	}
+	else {
+		KillTimer(mTimer);
+		mTimer = 0;
+	}
+	return mTimer;
+}
+
 void CCG2022112454冷家苇View::RenderScene()
 {
 	if (!m_bGLInitialized)
@@ -498,4 +513,13 @@ void CCG2022112454冷家苇View::OnSize(UINT nType, int cx, int cy)
 		glLoadIdentity();
 
 	}
+}
+
+void CCG2022112454冷家苇View::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值 
+	if (nIDEvent == mTimer) {
+		RenderScene();
+	}
+	__super::OnTimer(nIDEvent);
 }

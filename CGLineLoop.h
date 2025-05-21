@@ -21,5 +21,6 @@ public:
 protected:
 	std::vector<glm::dvec3> mPoints; // 存储闭合线上的点
 	double M_PI = 3.14159;
+	
 };
 

@@ -76,5 +76,6 @@ public:
     }
     CGRenderStateSet* getRenderStateSet() { return mRenderStateSet.get(); }
     const CGRenderStateSet* getRenderStateSet() const { return mRenderStateSet.get(); }
-
+public:
+    virtual void update() { if (mUpdateCallback) mUpdateCallback->run(this, userData()); }
 };

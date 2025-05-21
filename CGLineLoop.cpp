@@ -9,7 +9,6 @@ CGLineLoop::CGLineLoop()
 
 CGLineLoop::CGLineLoop(const std::vector<glm::dvec3> mPoints):mPoints(mPoints)
 {
-
 }
 
 CGLineLoop::~CGLineLoop()

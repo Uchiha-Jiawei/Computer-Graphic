@@ -100,3 +100,15 @@ bool CGGroup::Render(CGRenderContext* pRC, CGCamera* pCamera)
     }
     return true;
 }
+void CGGroup::update()
+{
+    if (mUpdateCallback)
+        mUpdateCallback->run(this, userData());
+    for (auto itr = mChildren.begin(); itr != mChildren.end(); ++itr)
+    {
+        (*itr)->update();
+        /*if ((*itr)->GetUpdateCallback()) {
+            (*itr)->GetUpdateCallback()->run((*itr).get(), (*itr)->userData());
+        }*/
+    }
+}
