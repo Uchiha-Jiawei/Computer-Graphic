@@ -62,12 +62,11 @@ bool CGScene::Render(CGRenderContext* pRC, CGCamera* pCamera)
 	glClear(GL_COLOR_BUFFER_BIT);
 	//场景节点更新 
 	mRoot->update();
-		//相机投影 
-		//pCamera->Projection(pCamera->ProjectionMode()); 
-
-		//绘制 
+	//相机投影 
+	pCamera->Projection(pCamera->ProjectionMode());
+	//绘制 
 	mRoot->Render(pRC, pCamera);
-	//绘制场景世界坐标系 
+	//+2绘制场景世界坐标系 
 	DrawWCS(pCamera);
 
 	return true;

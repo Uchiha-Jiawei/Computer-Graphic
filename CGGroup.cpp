@@ -2,6 +2,7 @@
 #include "CGGroup.h" 
 #include <algorithm> 
 #include "CGGeometry.h" 
+#include "CG2022112454Àä¼ÒÎ­Doc.h"
 IMPLEMENT_SERIAL(CGGroup, CGNode, 1)
 CGGroup::CGGroup()
 {
@@ -102,6 +103,8 @@ bool CGGroup::Render(CGRenderContext* pRC, CGCamera* pCamera)
 }
 void CGGroup::update()
 {
+    if (!CCG2022112454Àä¼ÒÎ­Doc::doRecall)
+        return;
     if (mUpdateCallback)
         mUpdateCallback->run(this, userData());
     for (auto itr = mChildren.begin(); itr != mChildren.end(); ++itr)

@@ -1,10 +1,81 @@
 #include "pch.h" 
 #include "CGCamera.h" 
-
+#include <GL/glu.h> 
 IMPLEMENT_SERIAL(CGCamera, CGTransform, 1)
 
+IMPLEMENT_SERIAL(Viewport, CGObject, 1)
+Viewport::Viewport()
+{
+    mX = 0;
+    mY = 0;
+    mWidth = 0;
+    mHeight = 0;
+    mClearColor = glm::vec4(0, 0, 0, 1);
+    mClearDepth = 1.0f;
+    mClearStencil = 0;
+    mClearFlags = CF_CLEAR_COLOR_DEPTH;
+    mScissorEnabled = true;
+}
+Viewport::Viewport(int x, int y, int w, int h)
+{
+    mX = x;
+    mY = y;
+    mWidth = w;
+    mHeight = h;
+    mClearColor = glm::vec4(0, 0, 0, 1);
+    mClearDepth = 1.0f;
+    mClearStencil = 0;
+    mClearFlags = CF_CLEAR_COLOR_DEPTH;
+    mScissorEnabled = true;
+}
+void Viewport::activate() const
+{
+    int x = mX;
+    int y = mY;
+    int w = mWidth;
+    int h = mHeight;
+    if (w < 1) w = 1;
+        if (h < 1) h = 1;
+
+    glViewport(x, y, w, h);
+
+    if (mClearFlags) {
+        GLboolean color_write_mask[4] = { 0,0,0,0 };
+        glGetBooleanv(GL_COLOR_WRITEMASK, color_write_mask);
+
+        GLboolean depth_write_mask = 0;
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &depth_write_mask);
+
+        GLboolean stencil_write_mask = 0;
+        glGetBooleanv(GL_STENCIL_WRITEMASK, &stencil_write_mask);
+
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDepthMask(GL_TRUE);
+        glStencilMask(GL_TRUE);
+
+        if (mScissorEnabled) {
+            glEnable(GL_SCISSOR_TEST);
+            glScissor(x, y, w, h);
+        }
+        else {
+            glDisable(GL_SCISSOR_TEST);
+        }
+
+        glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
+        glClearDepth(mClearDepth);
+        glClearStencil(mClearStencil);
+        glClear(mClearFlags);
+
+        glColorMask(color_write_mask[0], color_write_mask[1], color_write_mask[2],
+            color_write_mask[3]);
+        glDepthMask(depth_write_mask);
+        glStencilMask(stencil_write_mask);
+    }
+
+}
 CGCamera::CGCamera()
 {
+    mViewport = std::make_shared<Viewport>();
 }
 CGCamera::~CGCamera()
 {
@@ -13,32 +84,42 @@ void CGCamera::Serialize(CArchive& ar)
 {
 
 	CGTransform::Serialize(ar);
-	//ÏÈµ÷ÓÃ»ùÀàµÄĞòÁĞ»¯º¯Êı£¬ÔÙĞòÁĞ»¯×Ô¼ºµÄ³ÉÔ±£¨¸ù¾İĞèÒª£© 
+	//å…ˆè°ƒç”¨åŸºç±»çš„åºåˆ—åŒ–ï¼Œå†åºåˆ—åŒ–è‡ªå·±çš„æˆå‘˜ï¼Œæ³¨æ„é¡ºåº 
 
-	if (ar.IsStoring())
-
-		//±£´æ 
-
+	if (ar.IsStoring())	//å­˜å‚¨ 
 	{
-
-
 		//ar << ;  
-		//±£´æ×ÔÉíĞèÒª±£´æµÄÊı¾İ³ÉÔ±¡£<<ÔËËã·ûÖ§³ÖµÄÀàĞÍ²éÔÄCArchiveÊ¹ÓÃËµÃ÷ 
-
+		//åœ¨æ­¤å¤„æ·»åŠ éœ€è¦å­˜å‚¨çš„æ•°æ®æˆå‘˜ï¼Œ<< æ“ä½œç¬¦æ”¯æŒçš„ç±»å‹å‚è€ƒCArchiveä½¿ç”¨è¯´æ˜ 
 	}
-
-	else //¶ÁÈ¡ 
-
+	else //è¯»å– 
 	{
-
-
 		//ar >> ; 
-
 	}
 }
 
 void CGCamera::Projection(int mode)
 {
 
-	//´ı²¹³äÊµÏÖÍ¶Ó°²Ù×÷ 
+	//åœ¨æ­¤å¤„å®ç°æŠ•å½±å˜æ¢ 
+    viewport()->activate();
+
+    //è®¾ç½®æŠ•å½±å˜æ¢ 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glRenderMode(GL_RENDER);  //è®¾ç½®æ¸²æŸ“æ¨¡å¼é€‰æ‹© 
+    if (mode == 0) { //æ­£å¹³è¡ŒæŠ•å½±ï¼Œæ­£äº¤æŠ•å½± 
+        glOrtho(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
+    }
+    else if (mode == 1) {//é€è§†æŠ•å½± 
+        glFrustum(mLeft, mRight, mBottom, mTop, mNearPlane, mFarPlane);
+        //gluPerspective(45, (wRight- wLeft)/(wTop- wBottom), wNearPlane, wFarPlane); 
+    }
+    else {//å¹³è¡ŒæŠ•å½±ï¼ŒäºŒç»´æ•ˆæœ 
+        gluOrtho2D(mLeft, mRight, mBottom, mTop);
+    }
+    //æ¨¡å‹è§†å›¾å˜æ¢ 
+      glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity(); //ä»ç‚¹ï¼ˆè§‚å¯Ÿåæ ‡ç³»åŸç‚¹ï¼‰è§‚å¯Ÿ 
+    gluLookAt(mEye.x, mEye.y, mEye.z, mTarget.x, mTarget.y, mTarget.z, mUp.x, mUp.y, mUp.z); //è®¾ç½®è§‚å¯Ÿç‚¹å‚æ•°
+
 }

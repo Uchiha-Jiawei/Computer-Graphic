@@ -47,6 +47,8 @@
 #include "CGCylinder.h"
 #include"RobotBodyTransform.h"
 #include "CGRobot.h"
+#include "CGCameraControl.h"
+#include "CGTraceBoll.h"
 // CCG2022112454冷家苇Doc
 
 IMPLEMENT_DYNCREATE(CCG2022112454冷家苇Doc, CDocument)
@@ -75,9 +77,11 @@ BEGIN_MESSAGE_MAP(CCG2022112454冷家苇Doc, CDocument)
 	ON_COMMAND(ID_BUTTON17, &CCG2022112454冷家苇Doc::OnBtnTimer)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON17, &CCG2022112454冷家苇Doc::OnUpdateBtnTimer)
 	ON_COMMAND(ID_BUTTON19, &CCG2022112454冷家苇Doc::OnBuildRobot)
+	ON_COMMAND(ID_BUTTON34, &CCG2022112454冷家苇Doc::OnCameraControl)
+	ON_COMMAND(ID_BUTTON22, &CCG2022112454冷家苇Doc::OnTraceBoll)
 END_MESSAGE_MAP()
 
-
+bool CCG2022112454冷家苇Doc::doRecall = false; // 或你需要的初始值
 // CCG2022112454冷家苇Doc 构造/析构
 
 CCG2022112454冷家苇Doc::CCG2022112454冷家苇Doc() noexcept
@@ -269,6 +273,7 @@ void CCG2022112454冷家苇Doc::Serialize(CArchive& ar)
 	}
 }
 
+void CCG2022112454冷家苇Doc::OnViewResize(int cx, int cy) { mScene->GetMainCamera()->viewport()->set(0, 0, cx, cy); }
 #ifdef SHARED_HANDLERS
 
 // 缩略图的支持
@@ -1165,6 +1170,7 @@ void CCG2022112454冷家苇Doc::OnBtnTimer()
 	if (view != nullptr) {
 		mTimer = view->toggleFrameTimer();// 启动定时器 
 	}
+	doRecall = doRecall ? false : true;
 }
 
 void CCG2022112454冷家苇Doc::OnUpdateBtnTimer(CCmdUI* pCmdUI)
@@ -1189,4 +1195,46 @@ void CCG2022112454冷家苇Doc::OnBuildRobot()
 	// 更新所有视图
 	UpdateAllViews(NULL);
 	
+}
+
+void CCG2022112454冷家苇Doc::OnCameraControl()
+{
+	// TODO: 在此添加命令处理程序代码
+	CCGSceneGraphView* pSceneGraphView = GetSceneGraphView();
+	CCG2022112454冷家苇View* view = nullptr;
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		if (pView->IsKindOf(RUNTIME_CLASS(CCG2022112454冷家苇View))) {
+			view = dynamic_cast<CCG2022112454冷家苇View*>(pView);
+			break;
+		}
+	}
+	// 如果当前有正在执行的命令，先删除它
+	if (UIEventHandler::CurCommand()) {
+		UIEventHandler::DelCommand();
+	}
+	UIEventHandler::SetCommand(new CGCameraControl(mScene->GetMainCamera(), view->glfwWindow())); //创建鼠标交互命令对象
+}
+
+void CCG2022112454冷家苇Doc::OnTraceBoll()
+{
+	// TODO: 在此添加命令处理程序代码
+	CCGSceneGraphView* pSceneGraphView = GetSceneGraphView();
+	CCG2022112454冷家苇View* view = nullptr;
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		if (pView->IsKindOf(RUNTIME_CLASS(CCG2022112454冷家苇View))) {
+			view = dynamic_cast<CCG2022112454冷家苇View*>(pView);
+			break;
+		}
+	}
+	// 如果当前有正在执行的命令，先删除它
+	if (UIEventHandler::CurCommand()) {
+		UIEventHandler::DelCommand();
+	}
+	UIEventHandler::SetCommand(new CGTraceBoll(mScene->GetMainCamera(), view->glfwWindow())); //创建鼠标交互命令对象
 }

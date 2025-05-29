@@ -117,6 +117,12 @@
     <ClInclude Include="CGRobot.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CGCameraControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CGTraceBoll.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CG2022112454冷家苇.cpp">
@@ -204,6 +210,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CGRobot.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CGCameraControl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CGTraceBoll.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

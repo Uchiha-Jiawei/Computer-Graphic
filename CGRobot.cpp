@@ -329,7 +329,7 @@ std::shared_ptr<CGTransform> CGRobot::buildRobot()
     moveRobot(rUpperLegTransform, glm::vec3(0, 0, 1), 50, 0, 1);
     moveRobot(lUpperLegTransform, glm::vec3(0, 0, 1), 50, 50, 0);
     moveRobot(rUpperArmTransform, glm::vec3(1, 0, 0), 50, 0, 1);
-
+    moveRobot(robotRoot, glm::vec3(0, 1, 0), 100, 0, 1);
 	return robotRoot;
 }
 

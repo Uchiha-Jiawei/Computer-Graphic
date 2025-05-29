@@ -34,7 +34,10 @@ enum class EventType : int    //操作命令类型，参考如下定义，可根据需要修改
     EventUnknown = 2000,
 
     //鼠标交互
-    InteractByMouse = 27
+    InteractByMouse = 27,
+
+    //键盘交互
+	InteractByKey = 28
 };
 
 //与绘图客户区的交互，使用命令模式，简化CView派生类中键盘、鼠标事件的处理 

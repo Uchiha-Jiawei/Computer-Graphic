@@ -192,6 +192,7 @@
     <ClInclude Include="CG2022112454冷家苇Doc.h" />
     <ClInclude Include="CG2022112454冷家苇View.h" />
     <ClInclude Include="CGCamera.h" />
+    <ClInclude Include="CGCameraControl.h" />
     <ClInclude Include="CGCube.h" />
     <ClInclude Include="CGCylinder.h" />
     <ClInclude Include="CGDraw2DLineSeg.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="CGRobot.h" />
     <ClInclude Include="CGScene.h" />
     <ClInclude Include="CGSceneGraphView.h" />
+    <ClInclude Include="CGTraceBoll.h" />
     <ClInclude Include="CGTransform.h" />
     <ClInclude Include="CInputDialog1.h" />
     <ClInclude Include="framework.h" />
@@ -228,6 +230,7 @@
     <ClCompile Include="CG2022112454冷家苇Doc.cpp" />
     <ClCompile Include="CG2022112454冷家苇View.cpp" />
     <ClCompile Include="CGCamera.cpp" />
+    <ClCompile Include="CGCameraControl.cpp" />
     <ClCompile Include="CGCube.cpp" />
     <ClCompile Include="CGCylinder.cpp" />
     <ClCompile Include="CGDraw2DLineSeg.cpp" />
@@ -246,6 +249,7 @@
     <ClCompile Include="CGRobot.cpp" />
     <ClCompile Include="CGScene.cpp" />
     <ClCompile Include="CGSceneGraphView.cpp" />
+    <ClCompile Include="CGTraceBoll.cpp" />
     <ClCompile Include="CGTransform.cpp" />
     <ClCompile Include="CInputDialog1.cpp" />
     <ClCompile Include="MainFrm.cpp" />

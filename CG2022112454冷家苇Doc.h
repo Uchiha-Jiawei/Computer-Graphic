@@ -49,9 +49,11 @@ public:
 // 实现
 public:
 	virtual ~CCG2022112454冷家苇Doc();
+	static bool doRecall;
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
+	
 #endif
 
 protected:
@@ -102,4 +104,9 @@ public:
 	afx_msg void OnBtnTimer();
 	afx_msg void OnUpdateBtnTimer(CCmdUI* pCmdUI);
 	afx_msg void OnBuildRobot();
+
+public:
+	void OnViewResize(int cx, int cy);
+	afx_msg void OnCameraControl();
+	afx_msg void OnTraceBoll();
 };
