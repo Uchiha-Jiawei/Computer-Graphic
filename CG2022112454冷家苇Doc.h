@@ -109,4 +109,8 @@ public:
 	void OnViewResize(int cx, int cy);
 	afx_msg void OnCameraControl();
 	afx_msg void OnTraceBoll();
+	afx_msg void OnPointLight();
+	afx_msg void OnparallelLight();
+	afx_msg void OnSpotLight();
+	afx_msg void OnTimeVaryingControl();
 };

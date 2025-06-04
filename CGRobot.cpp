@@ -33,8 +33,6 @@ std::shared_ptr<CGTransform> CGRobot::DrawCube(std::shared_ptr<CGCube> cube, glm
 	auto c = std::make_shared<CGColor>();
 	c->setValue(color); 
 	t->gocRenderStateSet()->setRenderState(c, -1);
-    //auto p = std::make_shared<CGPolygonMode>(PM_LINE, PM_LINE); //设置线框模式
-    //t->gocRenderStateSet()->setRenderState(p, -1); //设置节点属性
 	t->translate(trans.x, trans.y, trans.z);
     t->rotate(rotate.x,rotate.y, rotate.z, rotate.w);
     t->scale(scale.x, scale.y, scale.z);

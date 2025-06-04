@@ -257,6 +257,11 @@ public:
     virtual ERenderState type() const { return RS_NONE; }
     //需重写的虚函数,index用于多属性比如多光源
     virtual void apply(const CGCamera* camera, CGRenderContext* ctx, int index = 0) const = 0;
+public:
+    void SetUpdateCallback(std::shared_ptr<CGCallback> uc) { mUpdateCallback = uc; }
+    inline CGCallback* GetUpdateCallback() { return mUpdateCallback.get(); }
+protected:
+    std::shared_ptr<CGCallback> mUpdateCallback = nullptr;
 };
 
 //颜色属性
@@ -425,3 +430,139 @@ protected:
     std::vector<CGRenderStateSlot> mRenderStates;
     std::map<EEnable, bool> mModes; //模式，true=开启，off等于关闭
 };
+
+class CGLightModel : public CGRenderState
+{
+public:
+    CGLightModel();
+    virtual ~CGLightModel() = default;
+    virtual ERenderState type() const { return RS_LightModel; }
+    virtual void apply(const CGCamera* camera, CGRenderContext* ctx, int index = 0) const;
+    void setLocalViewer(bool localviewer) { mLocalViewer = localviewer; }
+    void setTwoSide(bool twoside) { mTwoSide = twoside; }
+    void setAmbientColor(const glm::vec4& ambientcolor) { mAmbientColor = ambientcolor; }
+    bool localViewer() const { return mLocalViewer; }
+    bool twoSide() const { return mTwoSide; }
+    const glm::vec4& ambientColor() const { return mAmbientColor; }
+protected:
+    glm::vec4 mAmbientColor;//全局环境光 
+    bool mLocalViewer;      //无限远或局部观察（镜面反射角度的计算） 
+    bool mTwoSide;          //双面光照 
+};
+
+class CGShadeModel : public CGRenderState
+{
+public:
+    CGShadeModel(EShadeModel shademodel = SM_SMOOTH);
+    virtual ~CGShadeModel() = default;
+    virtual ERenderState type() const { return RS_ShadeModel; }
+    virtual void apply(const CGCamera* camera, CGRenderContext* ctx, int index = 0) const;
+    void set(EShadeModel shademodel) { mShadeModel = shademodel; }
+    EShadeModel shadeModel() const { return mShadeModel; }
+protected:
+    EShadeModel mShadeModel;
+};
+
+class CGMaterial : public CGRenderState
+{
+public:
+    CGMaterial();
+
+    virtual ERenderState type() const { return RS_Material; }
+    virtual void apply(const CGCamera* camera, CGRenderContext* ctx, int index) const;
+
+    void setAmbient(const glm::vec4& ambient) { mAmbient = ambient; }
+    const glm::vec4& getAmbient() const { return mAmbient; }
+
+    void setDiffuse(const glm::vec4& diffuse) { mDiffuse = diffuse; }
+    const glm::vec4& getDiffuse() const { return mDiffuse; }
+
+    void setSpecular(const glm::vec4& specular) { mSpecular = specular; }
+    const glm::vec4& getSpecular() const { return mSpecular; }
+
+    void setEmission(const glm::vec4& emission) { mEmission = emission; }
+    const glm::vec4& getEmission() const { return mEmission; }
+
+    void setShininess(float shininess) { mShininess = shininess; }
+    float getShininess() const { return mShininess; }
+
+    // 如果glColor设置颜色作为反射系数，通过此函数指定
+    void setColorMaterial(EColorMaterial mode) { mColorMaterialMode = mode; }
+    EColorMaterial getColorMaterial() const { return mColorMaterialMode; }
+
+protected:
+    glm::vec4 mAmbient;    // 环境反射系数
+    glm::vec4 mDiffuse;    // 漫反射系数
+    glm::vec4 mSpecular;   // 镜面反射系数
+    glm::vec4 mEmission;   // 散射系数 (通常称为自发光)
+    float     mShininess;  // 高光指数
+    EColorMaterial mColorMaterialMode; // glColor指定的颜色用于何种材质属性
+};
+
+class CGLight : public CGRenderState
+{
+public:
+    CGLight(int lightIndex = 0); // 构造函数，指定光源索引
+
+    virtual ERenderState type() const override;
+    virtual void apply(const CGCamera* camera, CGRenderContext* ctx, int index) const override;
+
+    // 设置光源属性
+    void setAmbient(const glm::vec4& ambient) { mAmbient = ambient; }
+    const glm::vec4& getAmbient() const { return mAmbient; }
+
+    void setDiffuse(const glm::vec4& diffuse) { mDiffuse = diffuse; }
+    const glm::vec4& getDiffuse() const { return mDiffuse; }
+
+    void setSpecular(const glm::vec4& specular) { mSpecular = specular; }
+    const glm::vec4& getSpecular() const { return mSpecular; }
+
+    void setPosition(const glm::vec4& position) { mPosition = position; } // w=0 for directional, w=1 for point/spot
+    const glm::vec4& getPosition() const { return mPosition; }
+
+    // 聚光灯属性
+    void setSpotDirection(const glm::vec3& direction) { mSpotDirection = direction; }
+    const glm::vec3& getSpotDirection() const { return mSpotDirection; }
+
+    void setSpotExponent(float exponent) { mSpotExponent = exponent; }
+    float getSpotExponent() const { return mSpotExponent; }
+
+    void setSpotCutoff(float cutoff) { mSpotCutoff = cutoff; } // Angle in degrees
+    float getSpotCutoff() const { return mSpotCutoff; }
+
+    // 衰减系数
+    void setAttenuation(float constant, float linear, float quadratic)
+    {
+        mConstantAttenuation = constant;
+        mLinearAttenuation = linear;
+        mQuadraticAttenuation = quadratic;
+    }
+    float getConstantAttenuation() const { return mConstantAttenuation; }
+    float getLinearAttenuation() const { return mLinearAttenuation; }
+    float getQuadraticAttenuation() const { return mQuadraticAttenuation; }
+
+    void setEnabled(bool enabled) { mEnabled = enabled; }
+    bool isEnabled() const { return mEnabled; }
+
+    int getLightIndex() const { return mLightIndex; } // 获取光源索引
+
+protected:
+    int mLightIndex; // 光源的索引 (0-7 for GL_LIGHT0 to GL_LIGHT7)
+    bool mEnabled;
+
+    glm::vec4 mAmbient;
+    glm::vec4 mDiffuse;
+    glm::vec4 mSpecular;
+    glm::vec4 mPosition; // (x, y, z, w) w=0 for directional, w=1 for point/spot
+
+    // 聚光灯参数
+    glm::vec3 mSpotDirection;
+    float     mSpotExponent;    // 聚光程度
+    float     mSpotCutoff;      // 发散角度 (0-90 degrees, or 180 for point light)
+
+    // 衰减参数
+    float mConstantAttenuation;
+    float mLinearAttenuation;
+    float mQuadraticAttenuation;
+};
+

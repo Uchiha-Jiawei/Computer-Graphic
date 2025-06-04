@@ -50,4 +50,5 @@ public:
 	int x1;
 	int y1;
 	int z1;
+	int m;
 };

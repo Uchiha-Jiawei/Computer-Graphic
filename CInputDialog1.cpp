@@ -30,6 +30,7 @@ CInputDialog1::CInputDialog1(CWnd* pParent /*=nullptr*/)
 	, x1(1)
 	, y1(1)
 	, z1(1)
+	, m(1)
 {
 
 }
@@ -56,6 +57,7 @@ void CInputDialog1::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_INPUT_VALUE13, x1);
 	DDX_Text(pDX, IDC_INPUT_VALUE14, y1);
 	DDX_Text(pDX, IDC_INPUT_VALUE15, z1);
+	DDX_Text(pDX, IDC_INPUT_VALUE16, m);
 }
 
 
