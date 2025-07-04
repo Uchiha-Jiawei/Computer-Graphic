@@ -275,9 +275,11 @@ public:
 
     void setValue(const glm::vec4& color) { mColor = color; }
     const glm::vec4& value() const { return mColor; }
-
+    void setType(int i);
 protected:
     glm::vec4 mColor;
+public:
+    int t;
 };
 
 class CGPointSize : public CGRenderState
@@ -485,6 +487,7 @@ public:
 
     void setShininess(float shininess) { mShininess = shininess; }
     float getShininess() const { return mShininess; }
+    void setType(int i);//设置材质类型
 
     // 如果glColor设置颜色作为反射系数，通过此函数指定
     void setColorMaterial(EColorMaterial mode) { mColorMaterialMode = mode; }
@@ -496,73 +499,10 @@ protected:
     glm::vec4 mSpecular;   // 镜面反射系数
     glm::vec4 mEmission;   // 散射系数 (通常称为自发光)
     float     mShininess;  // 高光指数
+    
     EColorMaterial mColorMaterialMode; // glColor指定的颜色用于何种材质属性
-};
-
-class CGLight : public CGRenderState
-{
 public:
-    CGLight(int lightIndex = 0); // 构造函数，指定光源索引
-
-    virtual ERenderState type() const override;
-    virtual void apply(const CGCamera* camera, CGRenderContext* ctx, int index) const override;
-
-    // 设置光源属性
-    void setAmbient(const glm::vec4& ambient) { mAmbient = ambient; }
-    const glm::vec4& getAmbient() const { return mAmbient; }
-
-    void setDiffuse(const glm::vec4& diffuse) { mDiffuse = diffuse; }
-    const glm::vec4& getDiffuse() const { return mDiffuse; }
-
-    void setSpecular(const glm::vec4& specular) { mSpecular = specular; }
-    const glm::vec4& getSpecular() const { return mSpecular; }
-
-    void setPosition(const glm::vec4& position) { mPosition = position; } // w=0 for directional, w=1 for point/spot
-    const glm::vec4& getPosition() const { return mPosition; }
-
-    // 聚光灯属性
-    void setSpotDirection(const glm::vec3& direction) { mSpotDirection = direction; }
-    const glm::vec3& getSpotDirection() const { return mSpotDirection; }
-
-    void setSpotExponent(float exponent) { mSpotExponent = exponent; }
-    float getSpotExponent() const { return mSpotExponent; }
-
-    void setSpotCutoff(float cutoff) { mSpotCutoff = cutoff; } // Angle in degrees
-    float getSpotCutoff() const { return mSpotCutoff; }
-
-    // 衰减系数
-    void setAttenuation(float constant, float linear, float quadratic)
-    {
-        mConstantAttenuation = constant;
-        mLinearAttenuation = linear;
-        mQuadraticAttenuation = quadratic;
-    }
-    float getConstantAttenuation() const { return mConstantAttenuation; }
-    float getLinearAttenuation() const { return mLinearAttenuation; }
-    float getQuadraticAttenuation() const { return mQuadraticAttenuation; }
-
-    void setEnabled(bool enabled) { mEnabled = enabled; }
-    bool isEnabled() const { return mEnabled; }
-
-    int getLightIndex() const { return mLightIndex; } // 获取光源索引
-
-protected:
-    int mLightIndex; // 光源的索引 (0-7 for GL_LIGHT0 to GL_LIGHT7)
-    bool mEnabled;
-
-    glm::vec4 mAmbient;
-    glm::vec4 mDiffuse;
-    glm::vec4 mSpecular;
-    glm::vec4 mPosition; // (x, y, z, w) w=0 for directional, w=1 for point/spot
-
-    // 聚光灯参数
-    glm::vec3 mSpotDirection;
-    float     mSpotExponent;    // 聚光程度
-    float     mSpotCutoff;      // 发散角度 (0-90 degrees, or 180 for point light)
-
-    // 衰减参数
-    float mConstantAttenuation;
-    float mLinearAttenuation;
-    float mQuadraticAttenuation;
+	int t; //1为黄铜 2为白色塑料 3为松木 4为白色陶瓷 5为透明蓝色玻璃 6为铬金属
 };
+
 

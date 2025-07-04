@@ -1,6 +1,7 @@
 #pragma once
 #include "CGObject.h"
 #include "CGTransform.h"
+#include "CG2022112454冷家苇Doc.h"
 //节点变换自定义参数，可以根据更新需要定义参数 
 class RobotBodyTransformParam : public CGObject
 {
@@ -23,7 +24,7 @@ public:
     virtual bool run(CGObject* object, void* data) override
 
     {
-        if (!mEnabled || !object)
+        if (!mEnabled || !object||!CCG2022112454冷家苇Doc::doRecallR)
             return false;
         CGTransform* body = dynamic_cast<CGTransform*>(object);  //要求变换节点 
         if (body) {

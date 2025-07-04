@@ -15,6 +15,7 @@
 
 #pragma once
 #include <memory> 
+#include "CGLight.h"
 class CGScene;
 class CGRenderContext;
 class CGNode;
@@ -49,7 +50,9 @@ public:
 // 实现
 public:
 	virtual ~CCG2022112454冷家苇Doc();
-	static bool doRecall;
+	static bool doRecallR;
+	static bool doRecallM;
+	static bool doRecallL;
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
@@ -79,6 +82,7 @@ public:
 	void InstToSceneTree(CTreeCtrl* pTree);//实列节点加入场景树 
 	void InstToSceneTree(CTreeCtrl* pTree, HTREEITEM hInst, CGNode* node);
 	void OnSelectSceneTreeItem(CTreeCtrl* pTree, HTREEITEM hItem); //场景树中选中节点
+	void setLight(shared_ptr<CGLight> light);
 	afx_msg void OnMoveLeft();
 	afx_msg void OnMoveRight();
 	afx_msg void OnMoveUp();
@@ -113,4 +117,7 @@ public:
 	afx_msg void OnparallelLight();
 	afx_msg void OnSpotLight();
 	afx_msg void OnTimeVaryingControl();
+	afx_msg void OnUpdateTimeControl(CCmdUI* pCmdUI);
+	afx_msg void OnMer();
+	afx_msg void OnMertrialChange();
 };

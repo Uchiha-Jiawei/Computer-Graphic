@@ -6,6 +6,40 @@ void CGColor::apply(const CGCamera* camera, CGRenderContext* ctx, int index) con
 	glColor4f(mColor.r, mColor.g, mColor.b, mColor.a);
 }
 
+void CGColor::setType(int i)
+{
+	switch (i) {
+	case 1: // 金属材质（黄铜）
+		setValue(glm::vec4(0.780392f, 0.568627f, 0.113725f, 1.0f));
+		t = 1;
+		break;
+
+	case 2: // 塑料材质（白色塑料）
+		setValue(glm::vec4(0.55f, 0.55f, 0.55f, 1.0f));
+		t = 2;
+		break;
+
+	case 3: // 木材材质（松木）
+		setValue(glm::vec4(0.78f, 0.53f, 0.25f, 1.0f));
+		t = 3;
+		break;
+
+	case 4: // 陶瓷材质（白色）
+		setValue(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+		t = 4;
+		break;
+
+	case 5: // 玻璃材质（透明蓝色）
+		setValue(glm::vec4(0.4f, 0.4f, 0.8f, 0.5f));
+		t = 5;
+		break;
+	default: // 金属材质（铬）
+		setValue(glm::vec4(0.4f, 0.4f, 0.4f, 1.0f));
+		t = 6;
+		break;
+	}
+}
+
 void CGPointSize::apply(const CGCamera* camera, CGRenderContext* ctx, int index) const
 {
 	glPointSize(mPointSize);
@@ -153,74 +187,66 @@ void CGMaterial::apply(const CGCamera* camera, CGRenderContext* ctx, int index) 
 		glColorMaterial(face, mode);
 	}
 }
+void  CGMaterial::setType(int i) {
+	switch (i) {
+	case 1: // 金属材质（黄铜）
+		setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		setAmbient(glm::vec4(0.329412f, 0.223529f, 0.027451f, 1.0f));
+		setDiffuse(glm::vec4(0.780392f, 0.568627f, 0.113725f, 1.0f));
+		setSpecular(glm::vec4(0.992157f, 0.941176f, 0.807843f, 1.0f));
+		setShininess(27.8974f);
+		setColorMaterial(CM_AMBIENT_AND_DIFFUSE);
+		t = 1;
+		break;
 
-CGLight::CGLight(int lightIndex)
-	: mLightIndex(lightIndex)
-	, mEnabled(true) // 默认启用
-	, mAmbient(0.0f, 0.0f, 0.0f, 1.0f)       // 默认无环境光
-	, mDiffuse(1.0f, 1.0f, 1.0f, 1.0f)       // 默认白色漫反射光
-	, mSpecular(1.0f, 1.0f, 1.0f, 1.0f)      // 默认白色镜面光
-	, mPosition(0.0f, 0.0f, 1.0f, 0.0f)      // 默认方向光源，沿Z轴正向
-	, mSpotDirection(0.0f, 0.0f, -1.0f)    // 默认聚光灯方向，沿Z轴负向
-	, mSpotExponent(0.0f)                  // 默认无聚光效果
-	, mSpotCutoff(180.0f)                  // 默认是点光源 (180度意味着不是聚光灯)
-	, mConstantAttenuation(0.0f)
-	, mLinearAttenuation(0.0f)
-	, mQuadraticAttenuation(0.0f)
-{
-}
+	case 2: // 塑料材质（白色塑料）
+		setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		setAmbient(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		setDiffuse(glm::vec4(0.55f, 0.55f, 0.55f, 1.0f));//
+		setSpecular(glm::vec4(0.70f, 0.70f, 0.70f, 1.0f));
+		setShininess(32.0f);
+		setColorMaterial(CM_DIFFUSE);
+		t = 2;
+		break;
 
-ERenderState CGLight::type() const
-{
-	// 根据 mLightIndex 返回对应的 ERenderState 类型
-	// 例如，如果 mLightIndex 是 0, 返回 RS_Light0, 如果是 1, 返回 RS_Light1, 等等。
-	// 这里需要确保 ERenderState 枚举中有足够的 RS_LightX 定义。
-	if (mLightIndex >= 0 && mLightIndex < 8) // OpenGL通常支持至少8个光源
-	{
-		return static_cast<ERenderState>(RS_Light0 + mLightIndex);
+	case 3: // 木材材质（松木）
+		setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		setAmbient(glm::vec4(0.2f, 0.13f, 0.05f, 1.0f));
+		setDiffuse(glm::vec4(0.78f, 0.53f, 0.25f, 1.0f));
+		setSpecular(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
+		setShininess(5.0f);
+		setColorMaterial(CM_AMBIENT_AND_DIFFUSE);
+		t = 3;
+		break;
+
+	case 4: // 陶瓷材质
+		setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		setAmbient(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
+		setDiffuse(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+		setSpecular(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
+		setShininess(100.0f);
+		setColorMaterial(CM_AMBIENT_AND_DIFFUSE);
+		t = 4;
+		break;
+
+	case 5: // 玻璃材质
+		setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		setAmbient(glm::vec4(0.1f, 0.1f, 0.1f, 0.5f));
+		setDiffuse(glm::vec4(0.4f, 0.4f, 0.4f, 0.5f));
+		setSpecular(glm::vec4(0.9f, 0.9f, 0.9f, 1.0f));
+		setShininess(96.0f);
+		setColorMaterial(CM_AMBIENT_AND_DIFFUSE);
+		t = 5;
+		break;
+
+	default: // 金属材质（铬）
+		setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		setAmbient(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f));
+		setDiffuse(glm::vec4(0.4f, 0.4f, 0.4f, 1.0f));
+		setSpecular(glm::vec4(0.774597f, 0.774597f, 0.774597f, 1.0f));
+		setShininess(76.8f);
+		setColorMaterial(CM_AMBIENT_AND_DIFFUSE);
+		t = 6;
+		break;
 	}
-	return RS_NONE; // 或者抛出异常，表示无效的光源索引
-}
-
-void CGLight::apply(const CGCamera* camera, CGRenderContext* ctx, int index) const
-{
-	// index 参数在这里通常与 mLightIndex 相同，或者可以忽略 index 而使用 mLightIndex
-	// 为保持一致性，我们使用 mLightIndex
-	GLenum light = GL_LIGHT0 + mLightIndex;
-
-	if (mEnabled)
-	{
-		glEnable(light);
-
-		glLightfv(light, GL_AMBIENT, &mAmbient.r);
-		glLightfv(light, GL_DIFFUSE, &mDiffuse.r);
-		glLightfv(light, GL_SPECULAR, &mSpecular.r);
-		glLightfv(light, GL_POSITION, &mPosition.r); // 位置受当前ModelView矩阵影响
-
-		// 聚光灯参数 (仅当 mSpotCutoff < 180.0f 时这些参数才有意义)
-		if (mSpotCutoff < 180.0f)
-		{
-			glLightfv(light, GL_SPOT_DIRECTION, &mSpotDirection.x);
-			glLightf(light, GL_SPOT_EXPONENT, mSpotExponent);
-			glLightf(light, GL_SPOT_CUTOFF, mSpotCutoff);
-		}
-		else // 如果是点光源或方向光源，确保聚光灯参数被设置为默认值，以避免意外行为
-		{
-			// 对于非聚光灯，通常将SPOT_CUTOFF设为180，SPOT_DIRECTION和SPOT_EXPONENT可以不设置或设为默认
-			// OpenGL规范中，如果GL_SPOT_CUTOFF是180，则光源被视为全向光源，其他聚光灯参数被忽略。
-			glLightf(light, GL_SPOT_CUTOFF, 180.0f);
-		}
-
-		// 衰减参数
-		glLightf(light, GL_CONSTANT_ATTENUATION, mConstantAttenuation);
-		glLightf(light, GL_LINEAR_ATTENUATION, mLinearAttenuation);
-		glLightf(light, GL_QUADRATIC_ATTENUATION, mQuadraticAttenuation);
-	}
-	else
-	{
-		glDisable(light);
-	}
-
-	// 注意：glEnable(GL_LIGHTING)应该在渲染循环的更高层级进行管理，
-	// 而不是在单个光源的apply函数中。这里只负责启用/禁用特定的GL_LIGHTi。
 }

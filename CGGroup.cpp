@@ -103,8 +103,6 @@ bool CGGroup::Render(CGRenderContext* pRC, CGCamera* pCamera)
 }
 void CGGroup::update()
 {
-    if (!CCG2022112454Àä¼ÒÎ­Doc::doRecall)
-        return;
     if (mUpdateCallback)
         mUpdateCallback->run(this, userData());
     for (auto itr = mChildren.begin(); itr != mChildren.end(); ++itr)

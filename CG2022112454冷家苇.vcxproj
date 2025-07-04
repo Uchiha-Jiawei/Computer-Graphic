@@ -188,6 +188,9 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CGLight.h" />
+    <ClInclude Include="ColorControl.h" />
+    <ClInclude Include="LightTimeControl.h" />
     <ClInclude Include="CG2022112454冷家苇.h" />
     <ClInclude Include="CG2022112454冷家苇Doc.h" />
     <ClInclude Include="CG2022112454冷家苇View.h" />
@@ -218,6 +221,7 @@
     <ClInclude Include="glIncludes.h" />
     <ClInclude Include="glLinks.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MaterialControl.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RobotBodyTransform.h" />
@@ -226,6 +230,9 @@
     <ClInclude Include="UIEventHandler.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CGLight.cpp" />
+    <ClCompile Include="ColorControl.cpp" />
+    <ClCompile Include="LightTimeControl.cpp" />
     <ClCompile Include="CG2022112454冷家苇.cpp" />
     <ClCompile Include="CG2022112454冷家苇Doc.cpp" />
     <ClCompile Include="CG2022112454冷家苇View.cpp" />
@@ -253,6 +260,7 @@
     <ClCompile Include="CGTransform.cpp" />
     <ClCompile Include="CInputDialog1.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MaterialControl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

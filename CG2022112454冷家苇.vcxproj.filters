@@ -123,6 +123,18 @@
     <ClInclude Include="CGTraceBoll.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="LightTimeControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLight.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CG2022112454冷家苇.cpp">
@@ -216,6 +228,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CGTraceBoll.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LightTimeControl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLight.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialControl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

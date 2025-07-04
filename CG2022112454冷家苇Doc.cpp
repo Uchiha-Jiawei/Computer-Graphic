@@ -49,6 +49,9 @@
 #include "CGRobot.h"
 #include "CGCameraControl.h"
 #include "CGTraceBoll.h"
+#include "LightTimeControl.h"
+#include "MaterialControl.h"
+#include "ColorControl.h"
 // CCG2022112454冷家苇Doc
 
 IMPLEMENT_DYNCREATE(CCG2022112454冷家苇Doc, CDocument)
@@ -83,9 +86,14 @@ BEGIN_MESSAGE_MAP(CCG2022112454冷家苇Doc, CDocument)
 	ON_COMMAND(ID_BUTTON26, &CCG2022112454冷家苇Doc::OnparallelLight)
 	ON_COMMAND(ID_BUTTON24, &CCG2022112454冷家苇Doc::OnSpotLight)
 	ON_COMMAND(ID_BUTTON27, &CCG2022112454冷家苇Doc::OnTimeVaryingControl)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON27, &CCG2022112454冷家苇Doc::OnUpdateTimeControl)
+	ON_COMMAND(ID_BUTTON25, &CCG2022112454冷家苇Doc::OnMertrialChange)
 END_MESSAGE_MAP()
 
-bool CCG2022112454冷家苇Doc::doRecall = false; // 或你需要的初始值
+bool CCG2022112454冷家苇Doc::doRecallR = false; // 或你需要的初始值
+bool CCG2022112454冷家苇Doc::doRecallM = false; // 或你需要的初始值
+bool CCG2022112454冷家苇Doc::doRecallL = false; // 或你需要的初始值
+
 // CCG2022112454冷家苇Doc 构造/析构
 
 CCG2022112454冷家苇Doc::CCG2022112454冷家苇Doc() noexcept
@@ -108,6 +116,7 @@ CCG2022112454冷家苇Doc::CCG2022112454冷家苇Doc() noexcept
 
 	//mScene->SetSceneData(g);
 	//长方体（模型） 
+
 }
 
 CCG2022112454冷家苇Doc::~CCG2022112454冷家苇Doc()
@@ -1026,53 +1035,7 @@ void CCG2022112454冷家苇Doc::OnSmallerY()
 		view->ShowPrompt("对象已在Y方向缩小");
 	}
 }
-std::shared_ptr<CGMaterial> choseMaterial(int i) {
-	auto material = std::make_shared<CGMaterial>();
-	switch (i) {
-	case 2: // 塑料材质
-		material->setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		material->setAmbient(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f)); // 较低的环境光吸收
-		material->setDiffuse(glm::vec4(0.58f, 0.58f, 0.75f, 1.0f)); // 更接近塑料的颜色
-		material->setSpecular(glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)); // 略微增加镜面反射
-		material->setShininess(64.0f); // 中等光泽度
-		material->setColorMaterial(CM_DIFFUSE);
-		break;
 
-	case 3: // 木材材质
-		material->setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		material->setAmbient(glm::vec4(0.05f, 0.025f, 0.0f, 1.0f)); // 较暗淡的环境光吸收
-		material->setDiffuse(glm::vec4(0.55f, 0.275f, 0.09f, 1.0f)); // 深棕色色调
-		material->setSpecular(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)); // 很少的镜面反射
-		material->setShininess(5.0f); // 非常低的光泽度
-		material->setColorMaterial(CM_AMBIENT_AND_DIFFUSE); // 结合环境光与漫反射颜色
-		break;
-
-	default: // 金属材质（如钢）
-		material->setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-		material->setAmbient(glm::vec4(0.02f, 0.02f, 0.02f, 1.0f)); // 极低的环境光吸收
-		material->setDiffuse(glm::vec4(0.05f, 0.05f, 0.05f, 1.0f)); // 对于金属，漫反射颜色通常很暗
-		material->setSpecular(glm::vec4(0.97f, 0.97f, 0.97f, 1.0f)); // 强烈的镜面反射
-		material->setShininess(128.0f); // 高光泽度
-		material->setColorMaterial(CM_SPECULAR); // 使用镜面反射颜色作为主颜色来源
-		break;
-	}
-	return material;
-}
-std::shared_ptr<CGColor> choseColor(int i) {
-	auto c = std::make_shared<CGColor>();
-	switch (i) {
-	case 2: // 塑料材质
-		c->setValue(glm::vec4(0.58f, 0.58f, 0.75f, 1.0f)); //塑料色
-		break;
-	case 3: // 木材材质
-		c->setValue(glm::vec4(0.55f, 0.275f, 0.09f, 1.0f)); //棕色
-		break;	
-	default: // 金属材质
-		c->setValue(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)); //黄色 
-		break;
-	}
-	return c;
-}
 int cubeNum = 0;
 void CCG2022112454冷家苇Doc::OnDraw3DCube()
 {
@@ -1104,13 +1067,17 @@ void CCG2022112454冷家苇Doc::OnDraw3DCube()
 		auto t1 = std::make_shared<CGTransform>(); //实列组节点 
 		auto e1 = std::make_shared<CGGeode>();  //实列叶节点 
 		e1->setName(CString(("Cube" + std::to_string(cubeNum)).c_str())); // 节点名称
-		e1->gocRenderStateSet()->setRenderState(choseColor(m), -1); //设置节点属性 
+		auto color1 = std::make_shared<CGColor>(); //属性 
+		color1->setType(m); //蓝色 
+		e1->gocRenderStateSet()->setRenderState(color1, -1); //设置节点属性 
 		t1->translate(x, y, z);
 		t1->rotate(angle, x1, y1, z1);
 		t1->scale(length, width, height);
 		e1->AddChild(c);
 		t1->AddChild(e1);
-		t1->gocRenderStateSet()->setRenderState(choseMaterial(m), -1);
+		auto material = std::make_shared<CGMaterial>();
+		material->setType(m);
+		t1->gocRenderStateSet()->setRenderState(material, -1);
 		mScene->GetSceneData()->asGroup()->AddChild(t1);
 
 		//左长方体节点 
@@ -1132,6 +1099,17 @@ void CCG2022112454冷家苇Doc::OnDraw3DCube()
 		 //更新所有视图
 		UpdateAllViews(NULL);
 
+		std::shared_ptr<MaterialControl> data = std::make_shared<MaterialControl>();
+		std::shared_ptr<changeMaterial> rc = std::make_shared<changeMaterial>();
+		material->setUserData(data);
+		//设置节点更新参数 
+		material->SetUpdateCallback(rc);
+		//设置节点更新回调 
+		std::shared_ptr<ColorControl> data1 = std::make_shared<ColorControl>();
+		std::shared_ptr<changeColor> rc1 = std::make_shared<changeColor>();
+		color1->setUserData(data1);
+		//设置节点更新参数 
+		color1->SetUpdateCallback(rc1);
 	}
 	
 
@@ -1171,16 +1149,17 @@ void CCG2022112454冷家苇Doc::OnDraw3DCylinber()
 		auto t1 = std::make_shared<CGTransform>();
 		auto e1 = std::make_shared<CGGeode>();
 		e1->setName(CString(("Cylinber" + std::to_string(cylinberNum)).c_str())); // 节点名称
-		auto color1 = std::make_shared<CGColor>();
-		color1->setValue(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)); // 红色
-		e1->gocRenderStateSet()->setRenderState(color1, -1);
-
+		auto color1 = std::make_shared<CGColor>(); //属性 
+		color1->setType(m); //蓝色 
+		e1->gocRenderStateSet()->setRenderState(color1, -1); //设置节点属性 
 		t1->translate(x, y, z);
 		t1->rotate(angle, x1, y1, z1);
 		t1->scale(1, 1, 1); // 可根据需要缩放
 		e1->AddChild(cyl);
 		t1->AddChild(e1);	
-		t1->gocRenderStateSet()->setRenderState(choseMaterial(m), -1);
+		auto material = std::make_shared<CGMaterial>();
+		material->setType(m);
+		t1->gocRenderStateSet()->setRenderState(material, -1);
 		mScene->GetSceneData()->asGroup()->AddChild(t1);
 
 		// 圆柱体实例 2：绿色线框
@@ -1202,6 +1181,18 @@ void CCG2022112454冷家苇Doc::OnDraw3DCylinber()
 		mScene->GetSceneData()->asGroup()->AddChild(t2);
 		// 更新所有视图
 		UpdateAllViews(NULL);
+
+		std::shared_ptr<MaterialControl> data = std::make_shared<MaterialControl>();
+		std::shared_ptr<changeMaterial> rc = std::make_shared<changeMaterial>();
+		material->setUserData(data);
+		//设置节点更新参数 
+		material->SetUpdateCallback(rc);
+		//设置节点更新回调 
+		std::shared_ptr<ColorControl> data1 = std::make_shared<ColorControl>();
+		std::shared_ptr<changeColor> rc1 = std::make_shared<changeColor>();
+		color1->setUserData(data1);
+		//设置节点更新参数 
+		color1->SetUpdateCallback(rc1);
 	}	
 }
 
@@ -1221,7 +1212,7 @@ void CCG2022112454冷家苇Doc::OnBtnTimer()
 	if (view != nullptr) {
 		mTimer = view->toggleFrameTimer();// 启动定时器 
 	}
-	doRecall = doRecall ? false : true;
+	doRecallR = doRecallR ? false : true;
 }
 
 void CCG2022112454冷家苇Doc::OnUpdateBtnTimer(CCmdUI* pCmdUI)
@@ -1234,32 +1225,15 @@ int robotNum = 0;
 void CCG2022112454冷家苇Doc::OnBuildRobot()
 {
 	// TODO: 在此添加命令处理程序代码
-	glEnable(GL_COLOR_MATERIAL);//启用颜色作为材质 
-	//// 创建材质对象
-	//auto material = std::make_shared<CGMaterial>();
-
-	//// 设置材质属性
-	//material->setAmbient(glm::vec4(0.25f, 0.25f, 0.25f, 1.0f));
-	//material->setDiffuse(glm::vec4(0.4f, 0.4f, 0.4f, 1.0f));
-	//material->setSpecular(glm::vec4(0.774597f, 0.774597f, 0.774597f, 1.0f));
-	//material->setShininess(76.8f);
-	// 创建CGRobot对象
-	 // 定义一个函数来创建带材质和颜色的对象
-	// 设置材质（每个对象可以不同，比如金属/塑料）
-	auto material = std::make_shared<CGMaterial>();
-	material->setEmission(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-	material->setAmbient(glm::vec4(0.2f, 0.2f, 0.2f, 1.0f));
-	material->setDiffuse(glm::vec4(0.9f, 0.9f, 0.7f, 1.0f));
-	material->setSpecular(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	material->setShininess(32.0f);
-	material->setColorMaterial(CM_DIFFUSE);
-
 	auto robot = std::make_shared<CGRobot>();
-	// 将材质应用到机器人节点
-	robot->gocRenderStateSet()->setRenderState(material, -1);
+	
 	// 生成机器人结构
 	auto robotRoot = robot->buildRobot();
 	robotRoot->setName(CString(("Robot" + std::to_string(robotNum++)).c_str()));
+	// 将材质应用到机器人节点
+	auto material = std::make_shared<CGMaterial>();
+	material->setType(6);
+	robotRoot->gocRenderStateSet()->setRenderState(material, -1);//设置为铬金属效果
 	// 添加到场景
 	mScene->GetSceneData()->asGroup()->AddChild(robotRoot);
 
@@ -1311,127 +1285,97 @@ void CCG2022112454冷家苇Doc::OnTraceBoll()
 	UIEventHandler::SetCommand(new CGTraceBoll(mScene->GetMainCamera(), view->glfwWindow())); //创建鼠标交互命令对象
 }
 
+void CCG2022112454冷家苇Doc::setLight(shared_ptr<CGLight>light)
+{
+	glEnable(GL_NORMALIZE); // 确保法线正确
+	glEnable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
+	// 关闭其他光源
+	for (int i = 0; i < 8; ++i)
+	{
+		glDisable(GL_LIGHT0 + i);
+	}
+	mScene->GetSceneData()->asGroup()->gocRenderStateSet()->setRenderState(light, -1);//设置为铬金属效果
+	UpdateAllViews(NULL);
+	std::shared_ptr<LightTimeControl> data = std::make_shared<LightTimeControl>();
+	data->setxDegree(1);
+	data->setyDegree(1);
+	data->setzDegree(1);
+	std::shared_ptr<LightChange> rc = std::make_shared<LightChange>();
+	light->setUserData(data);
+	//设置节点更新参数 
+	light->SetUpdateCallback(rc);
+	//设置节点更新回调 
+}
+
 void CCG2022112454冷家苇Doc::OnPointLight()
 {
 	// TODO: 在此添加命令处理程序代码
-	glDisable(GL_LIGHTING);
-	glDisable(GL_LIGHT0); // 关闭之前可能开启的光源
-	glEnable(GL_NORMALIZE); // 确保法线正确
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// 启用光照与深度测试（必须）
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_DEPTH_TEST); //启用深度测试，确保物体前后关系正确显示。
-	glEnable(GL_COLOR_MATERIAL); //启用颜色追踪材质（GL_COLOR_MATERIAL），让材质属性跟随 glColor 的变化而变化。
-
-	// 设置光源（点光源）
-	GLfloat light0_position[] = { 100.0f, 100.0f, 100.0f, 1.0f }; // w=1 表示点光源
-	GLfloat light0_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f }; // 合理白光强度
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse); //设置光源的漫反射颜色为白色（RGB: 1,1,1）
-	glLightfv(GL_LIGHT0, GL_POSITION, light0_position); //
-
-	// 重置聚光灯参数，确保点光源行为正确
-	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0f);
-	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 0.0f);
-	GLfloat spot_direction[] = {0.0f, 0.0f, -1.0f}; // 虽然点光源不使用，但为保持一致性设置
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-
-	// 创建光照模型（设置一次即可）
-	auto lightModel = std::make_shared<CGLightModel>();
-	lightModel->setAmbientColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)); // 更暗的环境光
-	lightModel->setLocalViewer(true);  // 启用局部观察者，意味着视点位置会影响高光计算（更真实）
-	lightModel->setTwoSide(true);      // 启用双面光照，使物体背面也能被正确照亮（否则背面可能看起来是黑的）。
-
-	// 将光照模型设置到场景根节点（防止多次覆盖）
-	mScene->GetSceneData()->asGroup()->gocRenderStateSet()->setRenderState(lightModel, -1);
-	// 更新所有视图
-	UpdateAllViews(NULL);
+	auto light = SceneLights::PointLight;
+	light->setPosition(glm::vec4(0, 0, 100, 1));
+	setLight(light);
 }
 
 void CCG2022112454冷家苇Doc::OnparallelLight()
 {
 	// TODO: 在此添加命令处理程序代码
-	glDisable(GL_LIGHTING);
-	glDisable(GL_LIGHT0); // 关闭之前可能开启的光源
-	glEnable(GL_NORMALIZE); // 确保法线正确
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// 启用光照与深度测试（必须）
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_DEPTH_TEST); //启用深度测试，确保物体前后关系正确显示。
-	glEnable(GL_COLOR_MATERIAL); //启用颜色追踪材质（GL_COLOR_MATERIAL），让材质属性跟随 glColor 的变化而变化。
-
-	// 设置光源（平行光）
-	GLfloat light0_position[] = { 100.0f, 100.0f, 100.0f, 0.0f }; // w=0 表示平行光
-	GLfloat light0_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f }; // 合理白光强度
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse); //设置光源的漫反射颜色为白色（RGB: 1,1,1）
-	glLightfv(GL_LIGHT0, GL_POSITION, light0_position); //
-
-	// 重置聚光灯参数，确保平行光源行为正确
-	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0f);
-	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 0.0f);
-	GLfloat spot_direction[] = {0.0f, 0.0f, -1.0f}; // 虽然平行光源不使用，但为保持一致性设置
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, spot_direction);
-
-	// 创建光照模型（设置一次即可）
-	auto lightModel = std::make_shared<CGLightModel>();
-	lightModel->setAmbientColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)); // 更暗的环境光
-	lightModel->setLocalViewer(true);  // 启用局部观察者，意味着视点位置会影响高光计算（更真实）
-	lightModel->setTwoSide(true);      // 启用双面光照，使物体背面也能被正确照亮（否则背面可能看起来是黑的）。
-
-	// 将光照模型设置到场景根节点（防止多次覆盖）
-	mScene->GetSceneData()->asGroup()->gocRenderStateSet()->setRenderState(lightModel, -1);
-	// 更新所有视图
-	UpdateAllViews(NULL);
+	auto light = SceneLights::DirectionalLight;
+	light->setPosition(glm::vec4(0, 0, 100, 0));
+	setLight(light);
 }
 
 void CCG2022112454冷家苇Doc::OnSpotLight()
 {
 	// TODO: 在此添加命令处理程序代码
-	glDisable(GL_LIGHTING);
-	glDisable(GL_LIGHT0); // 关闭之前可能开启的光源
-	glEnable(GL_NORMALIZE); // 确保法线正确
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	auto light = SceneLights::SpotLight;
 
-	// 启用光照与深度测试（必须）
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_DEPTH_TEST); //启用深度测试，确保物体前后关系正确显示。
-	glEnable(GL_COLOR_MATERIAL); //启用颜色追踪材质（GL_COLOR_MATERIAL），让材质属性跟随 glColor 的变化而变化。
-
-	// 光源位置和颜色
-	GLfloat light0_position[] = { 0.0f, 0.0f, 100.0f, 1.0f };
-	GLfloat light0_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	// 设置光源的基本属性
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse);
-	glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
-
-	// 设置聚光灯属性
-	GLfloat light0_spotDirection[] = { 0.0f, 0.0f, -1.0f };
-	glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light0_spotDirection);
-	glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 30.0f);      // 照射角度为 30 度
-	glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2.0f);     // 集中程度
-
-	// 创建光照模型（设置一次即可）
-	auto lightModel = std::make_shared<CGLightModel>();
-	lightModel->setAmbientColor(glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)); // 更暗的环境光
-	lightModel->setLocalViewer(true);  // 启用局部观察者，意味着视点位置会影响高光计算（更真实）
-	lightModel->setTwoSide(true);      // 启用双面光照，使物体背面也能被正确照亮（否则背面可能看起来是黑的）。
-
-	// 将光照模型设置到场景根节点（防止多次覆盖）
-	mScene->GetSceneData()->asGroup()->gocRenderStateSet()->setRenderState(lightModel, -1);
-	// 更新所有视图
-	UpdateAllViews(NULL);
+	glm::vec3 pos = glm::vec3(0, 0, 150);
+	glm::vec3 target = glm::vec3(0, 0, 0);
+	light->setPosition(glm::vec4(pos, 1.0f));
+	light->setSpotDirection(glm::normalize(target - pos));
+	setLight(light);
 }
 
 void CCG2022112454冷家苇Doc::OnTimeVaryingControl()
 {
-	// TODO: 在此添加命令处理程序代码
+	CCG2022112454冷家苇View* view = nullptr;
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		if (pView->IsKindOf(RUNTIME_CLASS(CCG2022112454冷家苇View))) {
+			view = dynamic_cast<CCG2022112454冷家苇View*>(pView);
+			break;
+		}
+	}
+	if (view != nullptr) {
+		mTimer = view->toggleFrameTimer();// 启动定时器 
+	}
+	doRecallL = doRecallL ? false : true;
+}
 
+void CCG2022112454冷家苇Doc::OnUpdateTimeControl(CCmdUI* pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(mTimer != 0);
+}
+
+void CCG2022112454冷家苇Doc::OnMertrialChange()
+{
+	// TODO: 在此添加命令处理程序代码
+	CCG2022112454冷家苇View* view = nullptr;
+	POSITION pos = GetFirstViewPosition();
+	while (pos != NULL)
+	{
+		CView* pView = GetNextView(pos);
+		if (pView->IsKindOf(RUNTIME_CLASS(CCG2022112454冷家苇View))) {
+			view = dynamic_cast<CCG2022112454冷家苇View*>(pView);
+			break;
+		}
+	}
+	if (view != nullptr) {
+		mTimer = view->toggleFrameTimer();// 启动定时器 
+	}
+	doRecallM = doRecallM ? false : true;
 }
